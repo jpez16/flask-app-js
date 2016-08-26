@@ -9,6 +9,7 @@ app.config.update(
 
 db = SQLAlchemy(app)
 
+
 class Base(db.Model):
 
     __abstract__  = True
@@ -47,6 +48,3 @@ def register(username, email, password):
     db.session.add(user)
     db.session.commit()
     return ("Hello %s (%s)" % (username, email))
-
-if __name__ == '__main__':
-    app.run(debug=True)
