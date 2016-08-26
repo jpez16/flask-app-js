@@ -9,27 +9,40 @@ app.config.update(
 
 db = SQLAlchemy(app)
 
-class User(db.Model):
+class Base(db.Model):
 
-    __tablename__ = "users"
-    username = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), unique=False, nullable=False)
+    __abstract__  = True
+
+    id            = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+
+class User(Base):
+    __tablename__ = 'users'
+
+    username = db.Column(db.String(128),  nullable=False)
+    email    = db.Column(db.String(128),  nullable=False, unique=True)
+    password = db.Column(db.String(192),  nullable=False)
 
     def __init__(self, username, email, password):
+
         self.username = username
-        self.email = email
-        self.password = password     #TODO: hash passwords before putting in db
+        self.email    = email
+        self.password = password
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % (self.name)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route("/register/<string:username>/<string:email>/<string:password>")
-def test(username, email, password):
+def register(username, email, password):
+    from datetime import datetime
+    date_created = datetime.now()
+    date_modified = date_created
     user = User(username, email, password)
     db.session.add(user)
     db.session.commit()
