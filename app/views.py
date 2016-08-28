@@ -9,6 +9,7 @@ def index():
 def register(username, email, password):
     from datetime import datetime
     from models.user import *
+    #import ipdb; ipdb.set_trace()
     date_created = datetime.now()
     date_modified = date_created
     user = User(username, email, password)
